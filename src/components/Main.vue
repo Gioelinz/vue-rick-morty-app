@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <Pagination
+      :prev="infoPage.prev"
+      :next="infoPage.next"
+      @changePage="takeUrl"
+    />
     <div class="row g-4">
       <div class="col-3" v-for="(char, index) in filteredContacts" :key="index">
         <CharCard :char="char" />
@@ -12,24 +17,37 @@
 import axios from "axios";
 
 import CharCard from "./CharCard.vue";
+import Pagination from "./Pagination.vue";
 
 export default {
   name: "Main",
   components: {
     CharCard,
+    Pagination,
   },
   props: ["keyFilter"],
   data() {
     return {
       chars: [],
+      infoPage: {},
+      getUrl: "",
+      url: "https://rickandmortyapi.com/api/character",
     };
   },
   methods: {
-    getApiDiscs() {
-      axios.get("https://rickandmortyapi.com/api/character").then((res) => {
+    getApiDiscs(url) {
+      axios.get(url).then((res) => {
         this.chars = res.data.results;
-        this.$emit("test", this.chars);
+        const { prev, next } = res.data.info;
+        this.infoPage = { prev, next };
+
+        this.$emit("callApiPage", this.infoPage);
+        this.$emit("callApi", this.chars);
       });
+    },
+    takeUrl(url) {
+      this.getUrl = url;
+      this.getApiDiscs(this.getUrl);
     },
   },
   computed: {
@@ -41,7 +59,7 @@ export default {
     },
   },
   mounted() {
-    this.getApiDiscs();
+    this.getApiDiscs(this.url);
   },
 };
 </script>

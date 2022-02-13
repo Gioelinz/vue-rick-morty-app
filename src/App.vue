@@ -1,7 +1,11 @@
 <template>
   <div id="app">
     <Header @filterContact="newKey" />
-    <Main @test="getApiArray" :key-filter="keyFilter" />
+    <Main
+      @callApi="getApiArray"
+      @callApiPage="newUrls"
+      :key-filter="keyFilter"
+    />
   </div>
 </template>
 
@@ -18,6 +22,7 @@ export default {
   data() {
     return {
       chars: [],
+      newPage: {},
       keyFilter: "",
     };
   },
@@ -27,6 +32,9 @@ export default {
     },
     newKey(value) {
       this.keyFilter = value;
+    },
+    newUrls(urls) {
+      this.newPage = urls;
     },
   },
 };
